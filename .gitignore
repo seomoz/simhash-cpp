@@ -1,0 +1,5 @@
+/src/deps/*
+*.dSYM
+src/bench
+src/hash
+src/test
