@@ -28,6 +28,15 @@ namespace Simhash {
         typedef Hash      hash_type;
         typedef Tokenizer tokenizer_type;
 
+        /* Alias of operator()
+         *
+         * Some languages have difficulty making use of operator(), and so this
+         * it made available for those languages */
+        inline hash_t hash(const char* s, size_t length) {
+            return operator()(s, length);
+        }
+
+        /* Return a simhash value using a moving window */
         hash_t operator()(const char* s, size_t length) {
             /* Simhash works by calculating the hashes of overlaping windows 
              * of the input, and then for each bit of that hash, increments a 

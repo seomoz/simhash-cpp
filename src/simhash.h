@@ -20,7 +20,7 @@ namespace Simhash {
      * @param b - number to compare
      *
      * @return number of bits that differ between a and b */
-    size_t num_differing_bits(Simhash::hash_t a, Simhash::hash_t b);
+    size_t num_differing_bits(hash_t a, hash_t b);
 
     /**
      * An iterator for access into the table. The way Judy arrays work, it 
