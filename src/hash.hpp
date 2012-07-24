@@ -58,7 +58,7 @@ namespace Simhash {
         
             hash_t hash(0);             // The hash we're trying to produce
             size_t   j(0);              // Counter
-            size_t   window(4);         // How many tokens in rolling hash?
+            size_t   window(3);         // How many tokens in rolling hash?
             const char*    next(NULL);  // Pointer to the char /after/ token
             const char*    current(s);  // String pointers
             
