@@ -120,9 +120,9 @@ namespace Simhash {
      * meaning of these permutation masks and this table in the scheme of near
      * duplicate detection */
     class Table {
-    	public:
+        public:
             typedef const_iterator_t const_iterator;
-        	
+            
             /**
              * Given a number as the limit of the maximum allowable bits that
              * can differ between a known fingerprint and a query, as well as
@@ -237,6 +237,12 @@ namespace Simhash {
              * Return an iterator to just past the end of this container */
             const_iterator end() {
                 return --const_iterator(judy, std::numeric_limits<hash_t>::max());
+            }
+
+            /**
+             * Get the search mask for this table */
+            hash_t get_search_mask() {
+                return search_mask;
             }
         private:
             // Private and undefined to prevent their use
