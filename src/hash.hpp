@@ -83,6 +83,51 @@ namespace Simhash {
             }
             return hash;
         }
+
+        /* As above, but operate on a vector of unsigned 64-bit numbers,
+           not strings. */
+        hash_t hash_fp(uint64_t *vec, int len)
+        {
+            // Counts
+            int64_t v[64] = {
+                0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0
+            };
+
+            hash_t hash(0);             // The hash we're trying to produce
+            size_t   j(0);              // Counter
+            size_t   window(3);         // How many tokens in rolling hash?
+            int     i;              // For stepping through tokens
+
+            /* Create a tokenizer, hash function, and cyclic */
+            Hash hasher;
+            Cyclic<hash_t> cyclic(window);
+
+            for (i = 0; i < len; i++) {
+                hash_t r = cyclic.push(hasher(reinterpret_cast<char*>(vec+i), sizeof(uint64_t), 0));
+                for (j = 63; j > 0; --j) {
+                    v[j] += (r & 1) ? 1 : -1;
+                    r = r >> 1;
+                }
+                v[j] += (r & 1) ? 1 : -1;
+            }
+
+            /* With counts appropriately tallied, create a 1 bit for each of
+             * the counts that's positive. That result is the hash. */
+            for (j = 0; j < 64; ++j) {
+                if (v[j] > 0) {
+                    hash = hash | (static_cast<hash_t>(1) << j);
+                }
+            }
+            return hash;
+        }
+
     private:
         /* Internal stuffs */
         hash_type      hasher;
