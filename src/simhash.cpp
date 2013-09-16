@@ -6,10 +6,11 @@ namespace Simhash {
     size_t num_differing_bits(Simhash::hash_t a, Simhash::hash_t b) {
         size_t count(0);
         Simhash::hash_t n = a ^ b;
-        while ((n = (n & (n - 1)))) {
+        while (n) {
             ++count;
+            n = n & (n - 1);
         }
-        return count + 1;
+        return count;
     }
 
     Table::Table(size_t d, std::vector<hash_t>& p):
