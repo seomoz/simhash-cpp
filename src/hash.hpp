@@ -128,6 +128,13 @@ namespace Simhash {
             return hash;
         }
 
+        /* As above, but operate on a vector of signed 64-bit integers. For
+         * some language bindings, casting and function overloading can be
+         * difficult to use, which is why it's given a new name */
+        hash_t hash_fps(int64_t *vec, int len) {
+            return hash_fp(reinterpret_cast<uint64_t*>(vec), len);
+        }
+
     private:
         /* Internal stuffs */
         hash_type      hasher;
