@@ -1,5 +1,7 @@
 Simhash Near-Duplicate Detection
 ================================
+[![Build Status](https://travis-ci.org/seomoz/simhash-cpp.svg)](https://travis-ci.org/seomoz/simhash-cpp)
+
 This library enables the identification of all fingerprints that are nearly
 identical to a query fingerprint. In this context, a fingerprint is an unsigned
 64-bit integer.
