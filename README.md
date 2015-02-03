@@ -18,6 +18,7 @@ Building
 This library links against [`libJudy`](http://judy.sourceforge.net/), which 
 must be installed before building this. With that in place:
 
+    git submodule update --init --recursive
     cd src && make && ./test
 
 For those curious about a testing performance, you can run the benchmark. It 
