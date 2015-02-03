@@ -88,8 +88,6 @@
 # define HASH_BIG_ENDIAN 0
 #endif
 
-#warning "Jenkins"
-
 
 #include <iostream>
 
