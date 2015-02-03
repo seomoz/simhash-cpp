@@ -23,7 +23,7 @@ must be installed before building this. With that in place:
     git submodule update --init --recursive
     cd src && make && ./test
 
-For those curious about a testing performance, you can run the benchmark. It
+For those curious about testing performance, you can run the benchmark. It
 performs a number of insertions into the query data structure, and then
 performs 4 queries for each of those inserted fingerprints. Provide a number as
 the first argument on the command line to change the number of items inserted.
