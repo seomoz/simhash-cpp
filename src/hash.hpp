@@ -65,7 +65,6 @@ namespace Simhash {
             Cyclic<hash_t> cyclic(window);
 
             for (tp = tokens; *tp != NULL; tp++) {
-                /* puts(*tp);  /* debug */
                 hash_t r = cyclic.push(hasher(*tp, strlen(*tp), 0));
                 for (j = 63; j > 0; --j) {
                     v[j] += (r & 1) ? 1 : -1;

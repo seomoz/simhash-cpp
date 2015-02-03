@@ -160,7 +160,7 @@ TEST_CASE("simhash", "We can perform simhash") {
         jabberwocky += " - Lewis Carroll in 'Alice In Wonderland'";
         uint64_t b = hasher(jabberwocky.c_str(), jabberwocky.length());
 
-        /* Now, make sure that the number of bits by which they differ is 
+        /* Now, make sure that the number of bits by which they differ is
          * small */
         a = a ^ b;
         size_t count = 0;
@@ -170,7 +170,7 @@ TEST_CASE("simhash", "We can perform simhash") {
         REQUIRE(count != 0);
         REQUIRE(count <= 3);
 
-        /* Now, let's make sure that we can verify that two strings are 
+        /* Now, let's make sure that we can verify that two strings are
          * nothing alike */
         a = hasher(pope.c_str(), pope.length());
         a = a ^ b;

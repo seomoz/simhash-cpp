@@ -1,5 +1,7 @@
-#ifndef SIMHASH_TOKENIZERS__UTIL_H
-#define SIMHASH_TOKENIZERS__UTIL_H
+#ifndef SIMHASH_TOKENIZERS_STRSPN_H
+#define SIMHASH_TOKENIZERS_STRSPN_H
+
+#include <string.h>
 
 namespace Simhash {
     struct Strspn {
