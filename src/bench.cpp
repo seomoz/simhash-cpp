@@ -12,7 +12,6 @@
 #include "tokenizers/strspn.h"
 
 #include "simhash.h"
-#include "util.h"
 
 int main(int argc, char* argv[]) {
     uint64_t limit(100000);
@@ -81,5 +80,4 @@ int main(int argc, char* argv[]) {
     std::cout << "There are " << count << " items in the table" << std::endl;
 
     return 0;
-
 }
