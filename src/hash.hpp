@@ -13,6 +13,8 @@
 #include "common.h"
 #include "cyclic.hpp"
 
+#include <vector>
+
 namespace Simhash {
     /**
      * Compute a similarity hash for the provided string using a rolling hash
@@ -24,6 +26,36 @@ namespace Simhash {
      * @return hash representative of the content of the text */
     template <typename Hash=jenkins>
     class Simhash {
+    private:
+        class Accumulator {
+        private:
+            static const size_t BITS = sizeof(hash_t) * 8;
+
+            size_t window;
+            Cyclic<hash_t> cyclic;
+            std::vector<int64_t> v;
+        public:
+            Accumulator() : window(3), cyclic(window), v(BITS, 0) {}
+
+            void update(hash_t hash) {
+                for (int j = (BITS - 1); j >= 0; --j) {
+                    v[j] += (hash & 1) ? 1 : -1;
+                    hash >>= 1;
+                }
+            }
+
+            /* With counts appropriately tallied, create a 1 bit for each of
+             * the counts that's positive. That result is the hash. */
+            hash_t result() {
+                hash_t hash(0);
+                for (int j = 0; j < BITS; ++j) {
+                    if (v[j] > 0) {
+                        hash |= (static_cast<hash_t>(1) << j);
+                    }
+                }
+                return hash;
+            }
+        };
     public:
         typedef Hash      hash_type;
 
@@ -37,94 +69,28 @@ namespace Simhash {
 
         /* Return a simhash value using a moving window */
         hash_t operator()(char **tokens) {
-            /* Simhash works by calculating the hashes of overlaping windows
-             * of the input, and then for each bit of that hash, increments a
-             * corresponding count. At the end, each of the counts is
-             * transformed back into a bit by whether or not the count is
-             * positive or negative */
-
-            // Counts
-            int64_t v[64] = {
-                0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0
-            };
-
-            hash_t hash(0);             // The hash we're trying to produce
-            size_t   j(0);              // Counter
-            size_t   window(3);         // How many tokens in rolling hash?
-            char     **tp;              // For stepping through tokens
-
-            /* Create a tokenizer, hash function, and cyclic */
             Hash hasher;
-            Cyclic<hash_t> cyclic(window);
+            Accumulator accumulator;
 
-            for (tp = tokens; *tp != NULL; tp++) {
-                hash_t r = cyclic.push(hasher(*tp, strlen(*tp), 0));
-                for (j = 63; j > 0; --j) {
-                    v[j] += (r & 1) ? 1 : -1;
-                    r = r >> 1;
-                }
-                v[j] += (r & 1) ? 1 : -1;
+            for (char **tp = tokens; *tp != NULL; tp++) {
+                accumulator.update(hasher(*tp, strlen(*tp), 0));
             }
 
-            /* With counts appropriately tallied, create a 1 bit for each of
-             * the counts that's positive. That result is the hash. */
-            for (j = 0; j < 64; ++j) {
-                if (v[j] > 0) {
-                    hash = hash | (static_cast<hash_t>(1) << j);
-                }
-            }
-            return hash;
+            return accumulator.result();
         }
 
         /* As above, but operate on a vector of unsigned 64-bit numbers,
            not strings. */
-        hash_t hash_fp(uint64_t *vec, int len)
-        {
-            // Counts
-            int64_t v[64] = {
-                0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0
-            };
-
-            hash_t hash(0);             // The hash we're trying to produce
-            size_t   j(0);              // Counter
-            size_t   window(3);         // How many tokens in rolling hash?
-            int     i;              // For stepping through tokens
-
-            /* Create a tokenizer, hash function, and cyclic */
+        hash_t hash_fp(uint64_t *vec, int len) {
             Hash hasher;
-            Cyclic<hash_t> cyclic(window);
+            Accumulator accumulator;
 
-            for (i = 0; i < len; i++) {
-                hash_t r = cyclic.push(hasher(reinterpret_cast<char*>(vec+i), sizeof(uint64_t), 0));
-                for (j = 63; j > 0; --j) {
-                    v[j] += (r & 1) ? 1 : -1;
-                    r = r >> 1;
-                }
-                v[j] += (r & 1) ? 1 : -1;
+            for (int i = 0; i < len; i++) {
+                accumulator.update(
+                    hasher(reinterpret_cast<char*>(vec+i), sizeof(uint64_t), 0));
             }
 
-            /* With counts appropriately tallied, create a 1 bit for each of
-             * the counts that's positive. That result is the hash. */
-            for (j = 0; j < 64; ++j) {
-                if (v[j] > 0) {
-                    hash = hash | (static_cast<hash_t>(1) << j);
-                }
-            }
-            return hash;
+            return accumulator.result();
         }
 
         /* As above, but operate on a vector of signed 64-bit integers. For
@@ -134,9 +100,20 @@ namespace Simhash {
             return hash_fp(reinterpret_cast<uint64_t*>(vec), len);
         }
 
-    private:
-        /* Internal stuffs */
-        hash_type      hasher;
+        template <typename Tokenizer>
+        hash_t hash_tokenizer(const char* string, const Tokenizer& tokenizer) {
+            Hash hasher;
+            Accumulator accumulator;
+
+            for (const char *current = string, *next = tokenizer(current)
+                ; next != NULL
+                ; next = tokenizer(current)) {
+                accumulator.update(hasher(current, next - current, 0));
+                current = next + 1;
+            }
+
+            return accumulator.result();
+        }
     };
 }
 

@@ -155,10 +155,10 @@ TEST_CASE("simhash", "We can perform simhash") {
     SECTION("Near-duplicates", "Can find near-duplicates") {
         /* Let's instantiate a simhasher */
         Simhash::Simhash<> hasher;
-        uint64_t a = hasher(jabberwocky.c_str(), jabberwocky.length());
+        uint64_t a = hasher.hash_tokenizer(jabberwocky.c_str(), Simhash::Strspn());
         /* Update jabberwocky to include who wrote it */
         jabberwocky += " - Lewis Carroll in 'Alice In Wonderland'";
-        uint64_t b = hasher(jabberwocky.c_str(), jabberwocky.length());
+        uint64_t b = hasher.hash_tokenizer(jabberwocky.c_str(), Simhash::Strspn());
 
         /* Now, make sure that the number of bits by which they differ is
          * small */
@@ -172,7 +172,7 @@ TEST_CASE("simhash", "We can perform simhash") {
 
         /* Now, let's make sure that we can verify that two strings are
          * nothing alike */
-        a = hasher(pope.c_str(), pope.length());
+        a = hasher.hash_tokenizer(pope.c_str(), Simhash::Strspn());
         a = a ^ b;
         count = 0;
         while (a) {
