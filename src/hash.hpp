@@ -48,7 +48,7 @@ namespace Simhash {
              * the counts that's positive. That result is the hash. */
             hash_t result() {
                 hash_t hash(0);
-                for (int j = 0; j < BITS; ++j) {
+                for (size_t j = 0; j < BITS; ++j) {
                     if (v[j] > 0) {
                         hash |= (static_cast<hash_t>(1) << j);
                     }

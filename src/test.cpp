@@ -116,7 +116,7 @@ TEST_CASE("tokenizers", "We can get tokens from a string") {
 
         /* Now we should be at the end */
         next = tokenizer(current);
-        REQUIRE(next == NULL);
+        REQUIRE((next == NULL));
     }
 }
 
