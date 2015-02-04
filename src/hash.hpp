@@ -72,7 +72,7 @@ namespace Simhash {
             Hash hasher;
             Accumulator accumulator;
 
-            for (char **tp = tokens; *tp != NULL; tp++) {
+            for (char **tp = tokens; *tp != NULL; ++tp) {
                 accumulator.update(hasher(*tp, strlen(*tp), 0));
             }
 
@@ -85,7 +85,7 @@ namespace Simhash {
             Hash hasher;
             Accumulator accumulator;
 
-            for (int i = 0; i < len; i++) {
+            for (int i = 0; i < len; ++i) {
                 accumulator.update(
                     hasher(reinterpret_cast<char*>(vec+i), sizeof(uint64_t), 0));
             }
