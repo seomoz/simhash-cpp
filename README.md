@@ -15,6 +15,12 @@ defined by the tokenizer).
 The default hash function is `jenkins` hash and the default tokenizer splits on
 non-alpha characters.
 
+![Status: Production](https://img.shields.io/badge/status-production-green.svg?style=flat)
+![Team: Big Data](https://img.shields.io/badge/team-big_data-green.svg?style=flat)
+![Scope: External](https://img.shields.io/badge/scope-external-green.svg?style=flat)
+![Open Source: Yes](https://img.shields.io/badge/open_source-MIT-green.svg?style=flat)
+![Critical: Yes](https://img.shields.io/badge/critical-yes-red.svg?style=flat)
+
 Building
 ========
 This library links against [`libJudy`](http://judy.sourceforge.net/), which
