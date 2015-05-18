@@ -111,7 +111,7 @@ TEST_CASE("tokenizers", "We can get tokens from a string") {
         for (size_t i = 0; i < 12; ++i) {
             next = tokenizer(current);
             REQUIRE((next - current) == expected[i]);
-            current = next + 1;
+            current = next + (*next != '\0');
         }
 
         /* Now we should be at the end */
