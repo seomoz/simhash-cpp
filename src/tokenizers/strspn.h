@@ -5,7 +5,10 @@
 
 namespace Simhash {
     struct Strspn {
-        /* Return the length of the token starting at last */
+        /**
+         * Return a pointer to the end of the next token or NULL if
+         * the end of string has been reached.
+         */
         const char* operator()(const char* last) const {
             size_t s = strspn(last,
                 "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
