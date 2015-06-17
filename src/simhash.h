@@ -31,8 +31,8 @@ namespace Simhash {
             /**
              * Default constructor
              *
-             * Initially I had this private an unimplemented to avoid its use,
-             * but it turns out that Cython needs. */
+             * Initially, I had this private and unimplemented to
+             * avoid its use, but it turns out that Cython needs it. */
             const_iterator_t(): judy(NULL), results(0), last(0) {};
 
             /**
