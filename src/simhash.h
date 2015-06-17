@@ -90,7 +90,7 @@ namespace Simhash {
             }
 
             // Equality tests
-            bool operator==(const const_iterator_t& other) {
+            bool operator==(const const_iterator_t& other) const {
                 // They've both reached their invalid ranges
                 if (!results && !other.results) {
                     return true;
@@ -98,7 +98,7 @@ namespace Simhash {
                 return last == other.last;
             }
 
-            bool operator!=(const const_iterator_t& other) {
+            bool operator!=(const const_iterator_t& other) const {
                 // They've both reached their invalid ranges
                 return last != other.last;
             }
