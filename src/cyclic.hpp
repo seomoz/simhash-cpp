@@ -23,7 +23,7 @@ namespace Simhash {
         }
 
         Cyclic(const Cyclic<hash_type>& o):
-            length(o.length), current(o.current), counter(o.counter), 
+            length(o.length), current(o.current), counter(o.counter),
             tokens(o.tokens) {}
 
         const Cyclic<hash_type>& operator=(const Cyclic<hash_type>& o) {
@@ -36,7 +36,7 @@ namespace Simhash {
 
         /* Push a new hash onto the stack and get the return value */
         hash_type push(hash_type val) {
-            /* Increment the counter. That's the index of the value we have to 
+            /* Increment the counter. That's the index of the value we have to
              * pop off, and the index that we'll replace */
             current = rotate(current) ^ rotate(tokens[counter], length) ^ val;
             tokens[counter] = val;
