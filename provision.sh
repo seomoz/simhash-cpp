@@ -1,6 +1,6 @@
 #! /usr/bin/env bash
 
-# Some dependendencies
+# Some dependencies
 sudo apt-get update
 sudo apt-get install -y libjudy-dev make g++ gdb git
 
