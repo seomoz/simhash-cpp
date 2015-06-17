@@ -41,7 +41,11 @@ namespace Simhash {
              * @param j - pointer to a Judy array
              * @param l - value of element to start at */
             const_iterator_t(void* j, hash_t l):
-                judy(j), results(1), last(l) {};
+                judy(j), results(1), last(l) {
+                    //Make sure we immediately populate last, 
+                    //otherwise we get a 0 on first acces
+                    J1F(results, judy, last);
+                };
             
             /** Copy constructor */
             const_iterator_t(const const_iterator_t& other):
@@ -99,6 +103,10 @@ namespace Simhash {
             }
             
             bool operator!=(const const_iterator_t& other) {
+                // We need to check this here as well otherwise we fail.
+                if (!results && !other.results) {
+                    return false;
+                }
                 // They've both reached their invalid ranges
                 return last != other.last;
             }
@@ -236,7 +244,7 @@ namespace Simhash {
             /**
              * Return an iterator to just past the end of this container */
             const_iterator end() {
-                return --const_iterator(judy, std::numeric_limits<hash_t>::max());
+                return const_iterator(judy, std::numeric_limits<hash_t>::max());
             }
 
             /**
