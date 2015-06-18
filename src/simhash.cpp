@@ -3,6 +3,8 @@
 #include <iostream>
 
 namespace Simhash {
+    const hash_t const_iterator_t::MAX = std::numeric_limits<hash_t>::max();
+
     size_t num_differing_bits(Simhash::hash_t a, Simhash::hash_t b) {
         size_t count(0);
         Simhash::hash_t n = a ^ b;

@@ -28,41 +28,49 @@ namespace Simhash {
      * and anyway, I don't anticipate it been needed. */
     class const_iterator_t {
         public:
+            static const hash_t MAX;
+
             /**
              * Default constructor
              *
              * Initially, I had this private and unimplemented to
              * avoid its use, but it turns out that Cython needs it. */
-            const_iterator_t(): judy(NULL), results(0), last(0) {}
+            const_iterator_t() : judy(NULL), last(MAX) {}
 
             /**
              * Constructor
              *
              * @param j - pointer to a Judy array
              * @param l - value of element to start at */
-            const_iterator_t(void* j, hash_t l):
-                judy(j), results(1), last(l) {}
+            const_iterator_t(Pvoid_t j, hash_t l) : judy(j), last(l) {
+                hash_t results = 0;
+                J1F(results, judy, last);
+                if (!results) {
+                    last = MAX;
+                }
+            }
 
             /** Copy constructor */
             const_iterator_t(const const_iterator_t& other):
-                judy(other.judy), results(1), last(other.last) {}
+                judy(other.judy), last(other.last) {}
 
             ~const_iterator_t() {}
 
             /**
              * Assignment operator. Returns an exact copy. */
             const const_iterator_t& operator=(const const_iterator_t& o) {
-                judy    = o.judy;
-                results = o.results;
-                last    = o.last;
+                judy = o.judy;
+                last = o.last;
                 return *this;
             }
 
             /**
              * Prefix increment */
             const const_iterator_t& operator++() {
-                if (results) {
-                    J1N(results, judy, last);
+                hash_t results = 0;
+                J1N(results, judy, last);
+                if (!results) {
+                    last = MAX;
                 }
                 return *this;
             }
@@ -77,8 +85,10 @@ namespace Simhash {
             /**
              * Prefix decrement */
             const const_iterator_t& operator--() {
-                if (results) {
-                    J1P(results, judy, last);
+                hash_t results = 0;
+                J1P(results, judy, last);
+                if (!results) {
+                    last = 0;
                 }
                 return *this;
             }
@@ -86,30 +96,28 @@ namespace Simhash {
             /**
              * Postfix decrement */
             const_iterator_t operator--(int) {
-                const_iterator_t c(*this); ++(*this); return c;
+                const_iterator_t c(*this); --(*this); return c;
             }
 
             // Equality tests
             bool operator==(const const_iterator_t& other) const {
-                // They've both reached their invalid ranges
-                if (!results && !other.results) {
-                    return true;
+                if (judy != other.judy && judy != NULL && other.judy != NULL) {
+                    return false;
                 }
                 return last == other.last;
             }
 
             bool operator!=(const const_iterator_t& other) const {
-                // They've both reached their invalid ranges
-                return last != other.last;
+                return !operator==(other);
             }
 
             // Access
-            hash_t operator*() {
+            hash_t operator*() const {
                 return last;
             }
+
         private:
             Pvoid_t judy;     // Pointer to our Judy array
-            hash_t  results;  // And results from queries
             hash_t  last;     // The last element we found
     };
 
@@ -236,7 +244,7 @@ namespace Simhash {
             /**
              * Return an iterator to just past the end of this container */
             const_iterator end() {
-                return --const_iterator(judy, std::numeric_limits<hash_t>::max());
+                return const_iterator();
             }
 
             /**
@@ -244,6 +252,7 @@ namespace Simhash {
             hash_t get_search_mask() {
                 return search_mask;
             }
+
         private:
             // Private and undefined to prevent their use
             Table();

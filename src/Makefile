@@ -13,8 +13,8 @@ hash: hash.cpp $(DEPS)
 simhash.o: simhash.h simhash.cpp
 	$(CPP) $(CPPOPTS) -o simhash.o -c simhash.cpp
 
-test: test.cpp $(DEPS)
-	$(CPP) $(CPPOPTS) -o test test.cpp -Ideps/Catch/single_include
+test: test.cpp simhash.o $(DEPS)
+	$(CPP) $(CPPOPTS) -o test test.cpp -Ideps/Catch/single_include simhash.o -lJudy
 
 clean:
 	rm -rf driver test *.o
