@@ -11,8 +11,8 @@
 #include <string>
 #include <stdint.h>
 
-TEST_CASE("cyclic", "The cyclic hashing function stuff") {
-    SECTION("rotation", "It can rotate integers by one bit") {
+TEST_CASE("The cyclic hashing function stuff", "[cyclic]") {
+    SECTION("It can rotate integers by one bit") {
         /* Given these inputs... */
         uint64_t inputs[] = {
             0xDEADBEEFDEADBEEF, 0xAAAAAAAAAAAAAAAA, 0x5555555555555555
@@ -30,7 +30,7 @@ TEST_CASE("cyclic", "The cyclic hashing function stuff") {
         }
     }
 
-    SECTION("multiple rotation", "It can rotate by many bits") {
+    SECTION("It can rotate by many bits") {
         REQUIRE(Simhash::Cyclic<uint64_t>::rotate(0xDEADBEEFDEADBEEF, 10)
             == 0xB6FBBF7AB6FBBF7A);
         REQUIRE(Simhash::Cyclic<uint64_t>::rotate(0xABCDEFFFABCDEFFF, 32)
@@ -42,7 +42,7 @@ TEST_CASE("cyclic", "The cyclic hashing function stuff") {
             == 0xABCDEFFFABCDEFFF);
     }
 
-    SECTION("cycling", "It can keep track of a cyclic hash correctly") {
+    SECTION("It can keep track of a cyclic hash correctly") {
         /* First, we'll instantiate a cyclic hasher with a window of 5 */
         Simhash::Cyclic<uint64_t> cyclic(5);
         /* Next, we're going to give this hash a sequence of longer than the
@@ -81,11 +81,11 @@ TEST_CASE("cyclic", "The cyclic hashing function stuff") {
     }
 }
 
-TEST_CASE("tokenizers", "We can get tokens from a string") {
+TEST_CASE("We can get tokens from a string", "[tokenizers]") {
     /* This is a string that we'd like to use for testing the tokenizer */
     const char* test_string = "what's new?How5is _ the ^# stuff";
 
-    SECTION("strspn", "We can use the strspn tokenizer") {
+    SECTION("We can use the strspn tokenizer") {
         /* We need an instance of our actual tokenizer */
         Simhash::Strspn tokenizer;
 
@@ -120,7 +120,7 @@ TEST_CASE("tokenizers", "We can get tokens from a string") {
     }
 }
 
-TEST_CASE("simhash", "We can perform simhash") {
+TEST_CASE("We can perform simhash", "[simhash]") {
     std::string jabberwocky = "Twas brillig, and the slithy toves"
         "  Did gyre and gimble in the wabe:"
         "All mimsy were the borogoves,"
@@ -152,7 +152,7 @@ TEST_CASE("simhash", "We can perform simhash") {
         "  of their carnal embrace"
         "had a damned-near-infinite slope";
 
-    SECTION("Near-duplicates", "Can find near-duplicates") {
+    SECTION("Can find near-duplicates") {
         /* Let's instantiate a simhasher */
         Simhash::Simhash<> hasher;
         uint64_t a = hasher.hash_tokenizer(jabberwocky.c_str(), Simhash::Strspn());
