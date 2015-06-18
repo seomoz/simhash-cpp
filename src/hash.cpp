@@ -3,7 +3,7 @@
 #include "hash.hpp"
 
 int main(int argc, char* argv[]) {
-    /* If we are provided with command line arguments, we should assume that 
+    /* If we are provided with command line arguments, we should assume that
      * each of them is a file to be read */
     if (argc > 1) {
         std::cout << "Going to read some files" << std::endl;
