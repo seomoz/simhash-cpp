@@ -104,7 +104,7 @@ namespace Simhash {
             }
 
             // Access
-            hash_t operator*() {
+            hash_t operator*() const {
                 return last;
             }
         private:
