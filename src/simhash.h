@@ -8,7 +8,7 @@
 
 #include <iostream>
 
-#include <cstdint>
+#include <stdint.h>
 #include <vector>
 #include <limits>
 
@@ -28,7 +28,7 @@ namespace Simhash {
      * and anyway, I don't anticipate it been needed. */
     class const_iterator_t {
         public:
-            static const hash_t MAX = UINT64_MAX;
+            static const hash_t MAX;
 
             /**
              * Default constructor
