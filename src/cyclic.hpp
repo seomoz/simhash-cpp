@@ -51,7 +51,7 @@ namespace Simhash {
 
         static inline hash_type rotate(hash_type v, size_t count) {
             count = count % bits;
-            return (v << count) | (v >> (bits - count));
+            return (v << count) | (v >> ((bits - count) % bits));
         }
     private:
         size_t    length;  // How many pieces of data to store
