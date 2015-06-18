@@ -33,7 +33,7 @@ namespace Simhash {
              *
              * Initially, I had this private and unimplemented to
              * avoid its use, but it turns out that Cython needs it. */
-            const_iterator_t(): judy(NULL), results(0), last(0) {};
+            const_iterator_t(): judy(NULL), results(0), last(0) {}
 
             /**
              * Constructor
@@ -41,13 +41,13 @@ namespace Simhash {
              * @param j - pointer to a Judy array
              * @param l - value of element to start at */
             const_iterator_t(void* j, hash_t l):
-                judy(j), results(1), last(l) {};
+                judy(j), results(1), last(l) {}
 
             /** Copy constructor */
             const_iterator_t(const const_iterator_t& other):
-                judy(other.judy), results(1), last(other.last) {};
+                judy(other.judy), results(1), last(other.last) {}
 
-            ~const_iterator_t() {};
+            ~const_iterator_t() {}
 
             /**
              * Assignment operator. Returns an exact copy. */
@@ -56,7 +56,7 @@ namespace Simhash {
                 results = o.results;
                 last    = o.last;
                 return *this;
-            };
+            }
 
             /**
              * Prefix increment */
@@ -90,7 +90,7 @@ namespace Simhash {
             }
 
             // Equality tests
-            bool operator==(const const_iterator_t& other) {
+            bool operator==(const const_iterator_t& other) const {
                 // They've both reached their invalid ranges
                 if (!results && !other.results) {
                     return true;
@@ -98,7 +98,7 @@ namespace Simhash {
                 return last == other.last;
             }
 
-            bool operator!=(const const_iterator_t& other) {
+            bool operator!=(const const_iterator_t& other) const {
                 // They've both reached their invalid ranges
                 return last != other.last;
             }
