@@ -14,7 +14,7 @@ simhash.o: simhash.h simhash.cpp
 	$(CPP) $(CPPOPTS) -o simhash.o -c simhash.cpp
 
 test: test.cpp $(DEPS)
-	$(CPP) $(CPPOPTS) -o test test.cpp -Ideps/Catch/single_include
+	$(CPP) $(CPPOPTS) -o test test.cpp -Ideps/Catch/single_include -lJudy
 
 clean:
 	rm -rf driver test *.o
