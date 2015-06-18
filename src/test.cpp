@@ -153,7 +153,7 @@ TEST_CASE("We can perform simhash", "[simhash]") {
         "  of their carnal embrace"
         "had a damned-near-infinite slope";
 
-    SECTION("Near-duplicates", "Can find near-duplicates") {
+    SECTION("Can find near-duplicates") {
         /* Let's instantiate a simhasher */
         Simhash::Simhash<> hasher;
         uint64_t a = hasher.hash_tokenizer(jabberwocky.c_str(), Simhash::Strspn());
