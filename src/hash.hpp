@@ -38,6 +38,7 @@ namespace Simhash {
             Accumulator() : window(3), cyclic(window), v(BITS, 0) {}
 
             void update(hash_t hash) {
+                hash = cyclic.push(hash);
                 for (int j = (BITS - 1); j >= 0; --j) {
                     v[j] += (hash & 1) ? 1 : -1;
                     hash >>= 1;
