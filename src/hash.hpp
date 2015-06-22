@@ -74,7 +74,10 @@ namespace Simhash {
             Accumulator accumulator;
 
             for (char **tp = tokens; *tp != NULL; ++tp) {
-                accumulator.update(hasher(*tp, strlen(*tp), 0));
+                size_t len = strlen(*tp);
+                if (len > 0) {
+                    accumulator.update(hasher(*tp, len, 0));
+                }
             }
 
             return accumulator.result();
@@ -109,7 +112,9 @@ namespace Simhash {
             for (const char *current = string, *next = tokenizer(current)
                 ; next != NULL
                 ; next = tokenizer(current)) {
-                accumulator.update(hasher(current, next - current, 0));
+                if (next != current) {
+                    accumulator.update(hasher(current, next - current, 0));
+                }
                 current = next + 1;
             }
 

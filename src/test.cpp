@@ -158,7 +158,7 @@ TEST_CASE("We can perform simhash", "[simhash]") {
         Simhash::Simhash<> hasher;
         uint64_t a = hasher.hash_tokenizer(jabberwocky.c_str(), Simhash::Strspn());
         /* Update jabberwocky to include who wrote it */
-        jabberwocky += " - Lewis Carroll in 'Alice In Wonderland'";
+        jabberwocky += " - Lewis Carroll 'Alice In Wonderland'";
         uint64_t b = hasher.hash_tokenizer(jabberwocky.c_str(), Simhash::Strspn());
 
         /* Now, make sure that the number of bits by which they differ is
