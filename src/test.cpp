@@ -27,7 +27,7 @@ TEST_CASE("The cyclic hashing function stuff", "[cyclic]") {
 
         for (size_t i = 0; i < count; ++i) {
             REQUIRE(
-                Simhash::Cyclic<uint64_t>::rotate(inputs[i]) == outputs[i]);
+                Simhash::Cyclic<uint64_t>::rotate(inputs[i], 1) == outputs[i]);
         }
     }
 
@@ -41,6 +41,11 @@ TEST_CASE("The cyclic hashing function stuff", "[cyclic]") {
         /* Really large offsets should be rounded down and treated as ok */
         REQUIRE(Simhash::Cyclic<uint64_t>::rotate(0xABCDEFFFABCDEFFF, 1024)
             == 0xABCDEFFFABCDEFFF);
+
+        for (size_t count = 0; count <= 1024; ++count) {
+            REQUIRE(Simhash::Cyclic<uint64_t>::rotate(1ul, count)
+                == 1ul << (count % 64));
+        }
     }
 
     SECTION("It can keep track of a cyclic hash correctly") {
@@ -80,6 +85,15 @@ TEST_CASE("The cyclic hashing function stuff", "[cyclic]") {
         REQUIRE(results[6] == results[14]);
         REQUIRE(results[7] == results[15]);
     }
+}
+
+static int bit_count(uint64_t value) {
+    int count = 0;
+    while (value) {
+        value &= value - 1;
+        ++count;
+    }
+    return count;
 }
 
 TEST_CASE("We can get tokens from a string", "[tokenizers]") {
@@ -163,22 +177,13 @@ TEST_CASE("We can perform simhash", "[simhash]") {
 
         /* Now, make sure that the number of bits by which they differ is
          * small */
-        a = a ^ b;
-        size_t count = 0;
-        while (a) {
-            a = a & (a - 1); ++count;
-        }
+        size_t count = bit_count(a ^ b);
         REQUIRE(count != 0);
         REQUIRE(count <= 3);
 
         /* Now, let's make sure that we can verify that two strings are
          * nothing alike */
-        a = hasher.hash_tokenizer(pope.c_str(), Simhash::Strspn());
-        a = a ^ b;
-        count = 0;
-        while (a) {
-            a = a & (a - 1); ++count;
-        }
+        count = bit_count(a ^ hasher.hash_tokenizer(pope.c_str(), Simhash::Strspn()));
         REQUIRE(count > 5);
     }
 }
