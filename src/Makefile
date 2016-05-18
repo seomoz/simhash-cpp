@@ -4,17 +4,24 @@ DEPS    = hashes/* tokenizers/* hash.hpp simhash.h simhash.cpp
 
 all: bench hash test
 
-bench: simhash.o bench.cpp hashes/* tokenizers/*
-	$(CPP) $(CPPOPTS) -o bench bench.cpp simhash.o -lJudy
+bench: bench.cpp simhash.o hashes/* tokenizers/*
+	$(CPP) $(CPPOPTS) -o $@ $< simhash.o -lJudy
 
 hash: hash.cpp $(DEPS)
-	$(CPP) $(CPPOPTS) -o hash hash.cpp
+	$(CPP) $(CPPOPTS) -o $@ $<
 
-simhash.o: simhash.h simhash.cpp
-	$(CPP) $(CPPOPTS) -o simhash.o -c simhash.cpp
+simhash.o: simhash.cpp simhash.h
+	$(CPP) $(CPPOPTS) -o $@ -c $<
 
-test: test.cpp simhash.o $(DEPS)
-	$(CPP) $(CPPOPTS) -o test test.cpp -Ideps/Catch/single_include simhash.o -lJudy
+test_catch: *_test.cpp test_catch_config.o simhash.o $(DEPS)
+	$(CPP) $(CPPOPTS) -o $@ *_test.cpp -Ideps/Catch/single_include test_catch_config.o simhash.o -lJudy
+
+# speed up tests (compile Catch as a separate rule)
+test_catch_config.o: test_catch_config.cpp
+	$(CPP) $(CPPOPTS) -o $@ -c $< -Ideps/Catch/single_include
+
+test: test_catch
+	./$<
 
 clean:
-	rm -rf bench hash test *.o
+	rm -rf bench hash test_catch *.o

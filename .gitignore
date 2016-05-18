@@ -2,6 +2,6 @@
 *.dSYM
 src/bench
 src/hash
-src/test
+src/test_catch
 *.o
 .vagrant
