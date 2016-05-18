@@ -16,10 +16,7 @@ namespace Simhash {
 
         Cyclic(size_t l=4): length(l), current(0), counter(0), tokens() {
             /* Initialize all of these to 0 */
-            tokens.resize(length);
-            for (size_t i = 0; i < l; ++i) {
-                tokens[i] = 0;
-            }
+            tokens.assign(length, 0);
         }
 
         Cyclic(const Cyclic<hash_type>& o):
@@ -38,20 +35,15 @@ namespace Simhash {
         hash_type push(hash_type val) {
             /* Increment the counter. That's the index of the value we have to
              * pop off, and the index that we'll replace */
-            current = rotate(current) ^ rotate(tokens[counter], length) ^ val;
+            current = rotate(current, 1) ^ rotate(tokens[counter], length) ^ val;
             tokens[counter] = val;
             counter = (counter + 1) % length;
             return current;
         }
 
-        /* Rotation shift by 1 */
-        static inline hash_type rotate(hash_type v) {
-            return (v << 1) | (v >> (bits - 1));
-        }
-
         static inline hash_type rotate(hash_type v, size_t count) {
-            count = count % bits;
-            return (v << count) | (v >> ((bits - count) % bits));
+            count %= bits;
+            return (v << count) | (v >> (bits - count));
         }
     private:
         size_t    length;  // How many pieces of data to store
