@@ -33,24 +33,27 @@ namespace Simhash {
 
             size_t window;
             Cyclic<hash_t> cyclic;
-            std::vector<int64_t> v;
+            std::vector<size_t> v;
+            size_t hash_count;
         public:
-            Accumulator() : window(3), cyclic(window), v(BITS, 0) {}
+            Accumulator() : window(3), cyclic(window), v(BITS, 0), hash_count(0) {}
 
             void update(hash_t hash) {
                 hash = cyclic.push(hash);
-                for (int j = (BITS - 1); j >= 0; --j) {
-                    v[j] += (hash & 1) ? 1 : -1;
+                ++hash_count;
+                for (size_t j = 0; j < BITS; ++j) {
+                    v[j] += hash & 1;
                     hash >>= 1;
                 }
             }
 
             /* With counts appropriately tallied, create a 1 bit for each of
-             * the counts that's positive. That result is the hash. */
+             * the counts that's over threshold. That result is the hash. */
             hash_t result() {
+                size_t threshold = hash_count / 2;
                 hash_t hash(0);
                 for (size_t j = 0; j < BITS; ++j) {
-                    if (v[j] > 0) {
+                    if (v[j] > threshold) {
                         hash |= (static_cast<hash_t>(1) << j);
                     }
                 }
@@ -115,6 +118,7 @@ namespace Simhash {
                 ; tokenizer(token.start + token.length, token)) {
                 accumulator.update(hasher(token.start, token.length, 0));
             }
+
             return accumulator.result();
         }
     };
