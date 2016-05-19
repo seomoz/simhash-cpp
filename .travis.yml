@@ -5,5 +5,4 @@ compiler:
 before_install: ./provision.sh
 script:
   - make -C src test
-  - ./src/test
 
