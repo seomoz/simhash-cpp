@@ -108,16 +108,13 @@ namespace Simhash {
         hash_t hash_tokenizer(const char* string, const Tokenizer& tokenizer) {
             Hash hasher;
             Accumulator accumulator;
+            StringToken token;
 
-            for (const char *current = string, *next = tokenizer(current)
-                ; next != NULL
-                ; next = tokenizer(current)) {
-                if (next != current) {
-                    accumulator.update(hasher(current, next - current, 0));
-                }
-                current = next + 1;
+            for (tokenizer(string, token)
+                ; token.length != 0
+                ; tokenizer(token.start + token.length, token)) {
+                accumulator.update(hasher(token.start, token.length, 0));
             }
-
             return accumulator.result();
         }
     };
