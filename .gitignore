@@ -1,6 +1,7 @@
 /src/deps/*
 *.dSYM
 src/bench
+src/bench_simhash
 src/hash
 src/test_catch
 *.o

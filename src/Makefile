@@ -7,6 +7,10 @@ all: bench hash test
 bench: bench.cpp simhash.o hashes/* tokenizers/*
 	$(CPP) $(CPPOPTS) -o $@ $< simhash.o -lJudy
 
+bench_simhash: bench_simhash.cpp
+	$(CPP) $(CPPOPTS) -o $@ $<
+	./$@
+
 hash: hash.cpp $(DEPS)
 	$(CPP) $(CPPOPTS) -o $@ $<
 
