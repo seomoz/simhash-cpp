@@ -63,4 +63,13 @@ TEST_CASE("We can perform simhash", "[simhash]") {
         count = bit_count(a ^ hasher.hash_tokenizer(pope.c_str(), Simhash::Strspn()));
         REQUIRE(count > 5);
     }
+
+    SECTION("simhash has specific value") {
+        // We cannot change value arbitrary, since Freshscape stores it in HBase
+        Simhash::Simhash<> hasher;
+        uint64_t a = hasher.hash_tokenizer(jabberwocky.c_str(), Simhash::Strspn());
+
+        // The expected value is taken from pre-refactoring implementation.
+        REQUIRE(a == 0x041379A587C66880ul);
+    }
 }

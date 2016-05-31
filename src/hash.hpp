@@ -41,7 +41,7 @@ namespace Simhash {
             void update(hash_t hash) {
                 hash = cyclic.push(hash);
                 ++hash_count;
-                for (size_t j = 0; j < BITS; ++j) {
+                for (int j = BITS - 1; j >= 0; --j) {
                     v[j] += hash & 1;
                     hash >>= 1;
                 }
