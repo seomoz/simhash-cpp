@@ -6,7 +6,7 @@ RELEASE_OPTS = -O3
 all: test
 
 # Release libraries
-release/libsimhash.o: release/simhash.o
+release/libsimhash.o: release/simhash.o release/permutation.o
 	mkdir -p release
 	ld -r -o $@ $^
 
@@ -15,7 +15,7 @@ release/%.o: src/%.cpp include/%.h
 	$(CPP) $(CPPOPTS) $(RELEASE_OPTS) -o $@ -c $<
 
 # Debug libraries
-debug/libsimhash.o: debug/simhash.o
+debug/libsimhash.o: debug/simhash.o debug/permutation.o
 	mkdir -p debug
 	ld -r -o $@ $^
 
@@ -27,7 +27,7 @@ test/%.o: test/%.cpp
 	$(CPP) $(CPPOPTS) $(DEBUG_OPTS) -o $@ -c $<
 
 # Tests
-test-all: test/test-all.o test/test-simhash.o debug/libsimhash.o
+test-all: test/test-all.o test/test-simhash.o test/test-permutation.o debug/libsimhash.o
 	$(CPP) $(CPPOPTS) $(DEBUG_OPTS) -o $@ $^ -lgtest -lpthread
 
 .PHONY: test
