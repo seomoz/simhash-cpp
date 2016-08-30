@@ -1,10 +1,13 @@
 #! /usr/bin/env bash
 
+set -e
+
 # Some dependencies
 sudo apt-get update
-sudo apt-get install -y libjudy-dev make g++ gdb git
+sudo apt-get install -y libjudy-dev make g++ gdb git cmake libgtest-dev
 
-(
-    cd /vagrant/
-    git submodule update --init --recursive
-)
+pushd /usr/src/gtest
+    sudo cmake CMakeLists.txt
+    sudo make
+    find /usr/src/gtest -name '*.a' | xargs -I^ sudo ln -sf ^ /usr/lib
+popd
