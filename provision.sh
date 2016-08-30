@@ -4,7 +4,7 @@ set -e
 
 # Some dependencies
 sudo apt-get update
-sudo apt-get install -y make g++ gdb git cmake libgtest-dev
+sudo apt-get install -y make g++ gdb git cmake libgtest-dev clang-3.5
 
 pushd /usr/src/gtest
     sudo CXX=g++ CC=gcc cmake CMakeLists.txt
