@@ -4,7 +4,7 @@ set -e
 
 # Some dependencies
 sudo apt-get update
-sudo apt-get install -y libjudy-dev make g++ gdb git cmake libgtest-dev
+sudo apt-get install -y make g++ gdb git cmake libgtest-dev
 
 pushd /usr/src/gtest
     sudo cmake CMakeLists.txt

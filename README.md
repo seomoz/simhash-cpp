@@ -23,12 +23,6 @@ non-alpha characters.
 
 Building
 ========
-This library links against [`libJudy`](http://judy.sourceforge.net/), which
-must be installed before building this. With that in place:
-
-    git submodule update --init --recursive
-    cd src && make && ./test
-
 For those curious about testing performance, you can run the benchmark. It
 performs a number of insertions into the query data structure, and then
 performs 4 queries for each of those inserted fingerprints. Provide a number as

@@ -1,8 +1,12 @@
-/src/deps/*
-*.dSYM
-src/bench
-src/bench_simhash
-src/hash
-src/test_catch
+# Binaries and build artifacts
+debug/
+release/
 *.o
-.vagrant
+
+# Coverage
+*.gcda
+*.gcno
+*.gcov
+
+# Vagrant
+.vagrant/
