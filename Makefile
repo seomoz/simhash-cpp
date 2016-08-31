@@ -1,26 +1,28 @@
 CXX          ?= g++
 CXXOPTS      ?= -g -Wall -Werror -std=c++11 -Iinclude/
-DEBUG_OPTS   ?= -fprofile-arcs -ftest-coverage -O0 -g -fPIC
+DEBUG_OPTS   ?= -fprofile-arcs -ftest-coverage -O0 -fPIC
 RELEASE_OPTS ?= -O3
 
 all: test
 
 # Release libraries
-release/libsimhash.o: release/simhash.o release/permutation.o
+release:
 	mkdir -p release
+
+release/libsimhash.o: release/simhash.o release/permutation.o
 	ld -r -o $@ $^
 
-release/%.o: src/%.cpp include/%.h
-	mkdir -p release
+release/%.o: src/%.cpp include/%.h release
 	$(CXX) $(CXXOPTS) $(RELEASE_OPTS) -o $@ -c $<
 
 # Debug libraries
-debug/libsimhash.o: debug/simhash.o debug/permutation.o
+debug:
 	mkdir -p debug
+
+debug/libsimhash.o: debug/simhash.o debug/permutation.o
 	ld -r -o $@ $^
 
-debug/%.o: src/%.cpp include/%.h
-	mkdir -p debug
+debug/%.o: src/%.cpp include/%.h debug
 	$(CXX) $(CXXOPTS) $(DEBUG_OPTS) -o $@ -c $<
 
 test/%.o: test/%.cpp
@@ -35,6 +37,4 @@ test: test-all
 	./test-all
 
 clean:
-	find . -name '*.o' -o -name '*.gcda' -o -name '*.gcno' -o -name '*.gcov' \
-		| xargs --no-run-if-empty rm
-	rm -f test-all bench
+	rm -rf debug release test-all bench
