@@ -2,8 +2,9 @@ CXX          ?= g++
 CXXOPTS      ?= -g -Wall -Werror -std=c++11 -Iinclude/
 DEBUG_OPTS   ?= -fprofile-arcs -ftest-coverage -O0 -fPIC
 RELEASE_OPTS ?= -O3
+BINARIES      = release/bin/simhash-find-all
 
-all: test
+all: test release/libsimhash.o $(BINARIES)
 
 # Release libraries
 release:
