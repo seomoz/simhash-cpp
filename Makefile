@@ -48,6 +48,7 @@ test-all: test/test-all.o test/test-simhash.o test/test-permutation.o debug/libs
 .PHONY: test
 test: test-all
 	./test-all
+	./scripts/check-coverage.sh $(PWD)
 
 clean:
 	rm -rf debug release test-all bench
