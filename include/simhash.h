@@ -3,6 +3,7 @@
 
 #include <cstddef>
 #include <stdint.h>
+#include <unordered_map>
 #include <unordered_set>
 #include <utility>
 #include <vector>
@@ -34,6 +35,11 @@ namespace Simhash {
     typedef std::unordered_set<match_t, match_t_hash> matches_t;
 
     /**
+     * The type of a set of clusters.
+     */
+    typedef std::vector<std::unordered_set<hash_t> > clusters_t;
+
+    /**
      * The number of bits in a hash_t.
      */
     static const size_t BITS = sizeof(hash_t) * 8;
@@ -61,6 +67,16 @@ namespace Simhash {
     matches_t find_all(std::unordered_set<hash_t>& hashes,
                        size_t number_of_blocks,
                        size_t different_bits);
+
+    /**
+     * Find all the clusters of simhashes.
+     *
+     * For a simhash to be added to a cluster, there must be a member in the
+     * cluster already that is within `number_of_blocks` of the hash.
+     */
+    clusters_t find_clusters(std::unordered_set<hash_t>& hashes,
+                             size_t number_of_blocks,
+                             size_t different_bits);
 }
 
 #endif
