@@ -26,18 +26,9 @@ void usage(int argc, char** argv)
 std::unordered_set<Simhash::hash_t> read_hashes(std::istream& stream)
 {
     std::unordered_set<Simhash::hash_t> hashes;
-    Simhash::hash_t hash(0);
-    while (!stream.eof())
+    for (std::string line; std::getline(stream, line); )
     {
-        stream.read(reinterpret_cast<char*>(&hash), sizeof(hash));
-        if (!stream.fail())
-        {
-            hashes.insert(hash);
-        }
-        else
-        {
-            break;
-        }
+        hashes.insert(std::stoull(line));
     }
     return hashes;
 }
@@ -46,10 +37,7 @@ void write_matches(std::ostream& stream, const Simhash::matches_t& matches)
 {
     for (auto it = matches.begin(); it != matches.end() && !std::cout.fail(); ++it)
     {
-        stream.write(
-            reinterpret_cast<const char*>(&(it->first)), sizeof(Simhash::hash_t));
-        stream.write(
-            reinterpret_cast<const char*>(&(it->second)), sizeof(Simhash::hash_t));
+        stream << "[" << it->first << ", " << it->second << "]\n";
     }
     stream.flush();
 }
