@@ -14,9 +14,8 @@ void usage(int argc, char** argv)
               << " --distance DISTANCE"
               << " --input INPUT"
               << " --output OUTPUT\n\n"
-              << "Read simhashes from input, find all pairs within distance bits of \n"
-              << "each other, writing them to output. The endianness of the output is \n"
-              << "the same as that of the input.\n\n"
+              << "Read simhashes from input, finds all clusters using the provided \n"
+              << "distance threshold, writing them to output.\n\n"
               << "  --blocks BLOCKS        Number of bit blocks to use\n"
               << "  --distance DISTANCE    Maximum bit distances of matches\n"
               << "  --input INPUT          Path to input ('-' for stdin)\n"
@@ -33,11 +32,17 @@ std::unordered_set<Simhash::hash_t> read_hashes(std::istream& stream)
     return hashes;
 }
 
-void write_matches(std::ostream& stream, const Simhash::matches_t& matches)
+void write_clusters(std::ostream& stream, const Simhash::clusters_t& clusters)
 {
-    for (auto it = matches.begin(); it != matches.end() && !std::cout.fail(); ++it)
+    for (const auto& cluster : clusters)
     {
-        stream << "[" << it->first << ", " << it->second << "]\n";
+        auto it = cluster.begin();
+        stream << "[" << *(it++);
+        for (; it != cluster.end(); ++it)
+        {
+            stream << ", " << *it;
+        }
+        stream << "]\n";
     }
     stream.flush();
 }
@@ -159,18 +164,18 @@ int main(int argc, char **argv) {
     }
 
     // Find matches
-    std::cerr << "Computing matches..." << std::endl;
-    Simhash::matches_t results = Simhash::find_all(hashes, blocks, distance);
+    std::cerr << "Computing clusters..." << std::endl;
+    Simhash::clusters_t results = Simhash::find_clusters(hashes, blocks, distance);
 
     // Write output
     if (output.compare("-") == 0)
     {
         std::cerr << "Writing results to stdout." << std::endl;
-        write_matches(std::cout, results);
+        write_clusters(std::cout, results);
     }
     else
     {
-        std::cerr << "Writing matches to " << output << std::endl;
+        std::cerr << "Writing results to " << output << std::endl;
         {
             std::ofstream fout(output, std::ofstream::binary);
             if (!fout.good())
@@ -178,7 +183,7 @@ int main(int argc, char **argv) {
                 std::cerr << "Error writing " << output << std::endl;
                 return 8;
             }
-            write_matches(fout, results);
+            write_clusters(fout, results);
         }
     }
 

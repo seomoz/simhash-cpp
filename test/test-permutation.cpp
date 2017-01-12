@@ -22,13 +22,25 @@ TEST(PermutationTest, Choose3From6) {
 TEST(PermutationTest, ChooseTooMany)
 {
     std::vector<Simhash::hash_t> population = { 0, 1, 2, 3, 4, 5 };
-    // ASSERT_THROW(Simhash::Permutation::choose(population, 7), std::invalid_argument);
+    ASSERT_THROW(Simhash::Permutation::choose(population, 7), std::invalid_argument);
 }
 
 TEST(PermutationTest, Create)
 {
     std::vector<Simhash::Permutation> permutations = Simhash::Permutation::create(6, 3);
     EXPECT_EQ(20, permutations.size());
+}
+
+TEST(PermutationTest, CreateTooManyBlocks)
+{
+    ASSERT_THROW(
+        Simhash::Permutation::create(Simhash::BITS + 1, 3), std::invalid_argument);
+}
+
+TEST(PermutationTest, CreateTooFewBlocks)
+{
+    ASSERT_THROW(
+        Simhash::Permutation::create(2, 3), std::invalid_argument);
 }
 
 TEST(PermutationTest, Apply)

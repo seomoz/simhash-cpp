@@ -2,6 +2,7 @@
 #include "permutation.h"
 
 #include <algorithm>
+#include <list>
 
 size_t Simhash::num_differing_bits(Simhash::hash_t a, Simhash::hash_t b)
 {
@@ -104,4 +105,59 @@ Simhash::matches_t Simhash::find_all(
     }
 
     return results;
+}
+
+// O(E)
+Simhash::clusters_t Simhash::find_clusters(
+    std::unordered_set<Simhash::hash_t>& hashes,
+    size_t number_of_blocks,
+    size_t different_bits)
+{
+    // Build up the edges of this graph
+    std::unordered_map<Simhash::hash_t, std::unordered_set<Simhash::hash_t> > nodes;
+    std::unordered_map<Simhash::hash_t, bool> visited;
+    for (const auto& match: find_all(hashes, number_of_blocks, different_bits))
+    {
+        nodes[match.first].insert(match.second);
+        nodes[match.second].insert(match.first);
+        visited[match.first] = false;
+        visited[match.second] = false;
+    }
+
+    // Go through every node that is connected to an edge, and conduct a BFS from it
+    // to build a cluster. Skip nodes that have already been visited.
+    Simhash::clusters_t clusters;
+    for (const auto& node : nodes)
+    {
+        // If a node has already been visited, it's already in a cluster.
+        if (visited[node.first])
+        {
+            continue;
+        }
+
+        // If a node has not been visited, then start a cluster emanating from it.
+        visited[node.first] = true;
+        std::unordered_set<Simhash::hash_t> cluster({node.first});
+        std::list<Simhash::hash_t> frontier(node.second.begin(), node.second.end());
+        while (!frontier.empty())
+        {
+            // The first frontier node is part of the cluster
+            Simhash::hash_t neighbor = frontier.front();
+            frontier.pop_front();
+            cluster.insert(neighbor);
+
+            // Put every unvisited neighbor in the frontier
+            for (Simhash::hash_t hash : nodes[neighbor])
+            {
+                if (!visited[hash])
+                {
+                    frontier.push_back(hash);
+                    visited[hash] = true;
+                }
+            }
+        }
+        clusters.push_back(cluster);
+    }
+
+    return clusters;
 }

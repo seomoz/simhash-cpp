@@ -21,21 +21,30 @@ non-alpha characters.
 ![Open Source: Yes](https://img.shields.io/badge/open_source-MIT-green.svg?style=flat)
 ![Critical: Yes](https://img.shields.io/badge/critical-yes-red.svg?style=flat)
 
-Building
-========
-For those curious about testing performance, you can run the benchmark. It
-performs a number of insertions into the query data structure, and then
-performs 4 queries for each of those inserted fingerprints. Provide a number as
-the first argument on the command line to change the number of items inserted.
-To be clear, __this is done on merely one of the tables needed to perform
-simhash queries__.
-
-    ./bench 10000000
-
 Usage
 =====
-I'll work on this documentation as time permits, but for the time being, refer
-to the source and `bench.cpp`.
+
+Library
+-------
+The library provides two utilities for finding simhashes:
+
+- `Simhash::find_all` finds all matching pairs of simhashes
+- `Simhash::find_clusters` finds clusters of matching simhashes (see `#clustering`)
+
+Binaries
+--------
+This also provides two binaries to facilitate use from other languages. They both read
+hashes as newline-separated decimal strings, and print out newline-separated JSON arrays.
+
+- `simhash-find-all` writes all matching pairs as arrays with two elements
+- `simhash-find-clusters` writes all clusters as arrays of simhashes
+
+Both have the following common arguments:
+
+- `--input` names a file from which to read (defaults to `-`, meaning `stdin`)
+- `--output` names a file to which to write (defaults to `-`, meaning `stdout`)
+- `--blocks` sets the number of blocks to use for simhash matching
+- `--distance` sets the maximum bit distance for considering matches
 
 Architecture
 ============
@@ -102,3 +111,15 @@ scan. In this case, the table that's permuted `A C F B D E` will match. It's
 important to note that it's possible for a query to match from more than one
 table. For example, if two of the non-matching bits are in the same block, or
 the query differs by fewer than 3 bits.
+
+Clustering
+==========
+The current clustering implementation considers the clusters to be the connected
+components of the connectivity graph. In other words:
+
+    For a simhash to be a member of a cluster, it must be a match with at least one
+    member of that cluster.
+
+This does mean that a cluster may have pairs of members that aren't matches. For
+examples, (`A, B, C, D`) might be a cluster where `A` matches `B`, which matches
+`C`, which matches `D`, but `A` and `D` are too far apart to be a match.
