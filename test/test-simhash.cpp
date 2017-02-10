@@ -131,7 +131,7 @@ std::vector<std::set<Simhash::hash_t> > sortClusters(const Simhash::clusters_t& 
         bool operator() (
             const std::set<Simhash::hash_t>& a,
             const std::set<Simhash::hash_t> b)
-        {   
+        {
             return min(a) < min(b);
         }
 
@@ -166,7 +166,7 @@ TEST(SimhashTest, FindClusters)
         { 0x00FF0000, 0x00EF0000, 0x00EE0000, 0x00CE0000 },
         { 0xFF000000, 0xEF000000, 0xEE000000, 0xCE000000 }
     };
-    
+
     for (size_t blocks = 4; blocks < 10; ++blocks)
     {
         auto actual = Simhash::find_clusters(hashes, blocks, 3);
