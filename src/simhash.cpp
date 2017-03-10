@@ -137,7 +137,7 @@ Simhash::clusters_t Simhash::find_clusters(
 
         // If a node has not been visited, then start a cluster emanating from it.
         visited[node.first] = true;
-        std::unordered_set<Simhash::hash_t> cluster({node.first});
+        Simhash::cluster_t cluster({node.first});
         std::list<Simhash::hash_t> frontier(node.second.begin(), node.second.end());
         while (!frontier.empty())
         {
@@ -145,6 +145,7 @@ Simhash::clusters_t Simhash::find_clusters(
             Simhash::hash_t neighbor = frontier.front();
             frontier.pop_front();
             cluster.insert(neighbor);
+            visited[neighbor] = true;
 
             // Put every unvisited neighbor in the frontier
             for (Simhash::hash_t hash : nodes[neighbor])
