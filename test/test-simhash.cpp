@@ -194,3 +194,11 @@ TEST(SimhashTest, FindClustersDiverse)
         EXPECT_EQ(sortClusters(expected), sortClusters(actual));
     }
 }
+
+TEST(SimhashTest, FindClustersUnique)
+{
+    std::unordered_set<Simhash::hash_t> hashes = { 20, 10 };
+    Simhash::clusters_t expected = { { 10L, 20L } };
+    // 10 and 20 are 4 bits different
+    EXPECT_EQ(sortClusters(expected), sortClusters(Simhash::find_clusters(hashes, 5, 4)));
+}
