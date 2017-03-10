@@ -137,7 +137,7 @@ int main(int argc, char **argv) {
 
     if (blocks <= distance)
     {
-        std::cerr << "Blocks (" << blocks << ") must be >= distance (" << distance << ")"
+        std::cerr << "Blocks (" << blocks << ") must be > distance (" << distance << ")"
                   << std::endl;
         return 6;
     }

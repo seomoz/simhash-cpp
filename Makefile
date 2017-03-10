@@ -30,7 +30,7 @@ debug/libsimhash.o: debug/simhash.o debug/permutation.o
 debug/%.o: src/%.cpp include/%.h debug
 	$(CXX) $(CXXOPTS) $(DEBUG_OPTS) -o $@ -c $<
 
-debug/bin/%: src/bin/%.cpp debug/libsimhash.o debug/bin
+debug/bin/%: src/bin/%.cpp debug/libsimhash.o
 	mkdir -p debug/bin
 	$(CXX) $(CXXOPTS) $(DEBUG_OPTS) -o $@ $^
 
