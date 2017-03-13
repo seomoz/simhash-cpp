@@ -37,7 +37,8 @@ namespace Simhash {
     /**
      * The type of a set of clusters.
      */
-    typedef std::vector<std::unordered_set<hash_t> > clusters_t;
+    typedef std::unordered_set<hash_t> cluster_t;
+    typedef std::vector<cluster_t> clusters_t;
 
     /**
      * The number of bits in a hash_t.
