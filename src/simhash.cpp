@@ -3,6 +3,8 @@
 
 #include <algorithm>
 #include <list>
+#include <iostream>
+#include <cstdint>
 
 size_t Simhash::num_differing_bits(Simhash::hash_t a, Simhash::hash_t b)
 {
@@ -43,6 +45,14 @@ Simhash::hash_t Simhash::compute(const std::vector<Simhash::hash_t>& hashes)
     return result;
 }
 
+void print(std::unordered_set<Simhash::hash_t> const &s)
+{
+    // Helper function to print values
+    for (auto const &i: s) {
+        std::cout << i << "\n";
+    }
+}
+
 /**
  * Find all near-matches in a set of hashes.
  *
@@ -70,6 +80,84 @@ Simhash::matches_t Simhash::find_all(
         };
         std::transform(hashes.begin(), hashes.end(), copy.begin(), op);
         std::sort(copy.begin(), copy.end());
+        // std::cout << "*******************************************************";
+        // std::cout << "\n Starting new permutation \n";
+        // std::cout << "*******************************************************";
+        // Walk through and find regions that have the same prefix subject to the mask
+        Simhash::hash_t mask = permutation.search_mask();
+        auto start = copy.begin();
+        while (start != copy.end())
+        {
+            // Find the end of the range that starts with this prefix
+            Simhash::hash_t prefix = (*start) & mask;
+            std::vector<Simhash::hash_t>::iterator end = start;
+            for (; end != copy.end() && (*end & mask) == prefix; ++end) { }
+            // std::cout << "\n end: \n";
+            // std::cout << *end;
+            // For all the hashes that are between start and end, consider them all
+            for (auto a = start; a != end; ++a)
+            {
+                for (auto b = a + 1; b != end; ++b)
+                {
+                    // std::cout << "\nComparing a:b \n";
+                    // std::cout << *a;
+                    // std::cout << " : ";
+                    // std::cout << *b;
+                    if (Simhash::num_differing_bits(*a, *b) <= different_bits)
+                    {
+                        // std::cout << "\nFound match \n";
+                        Simhash::hash_t a_raw = permutation.reverse(*a);
+                        Simhash::hash_t b_raw = permutation.reverse(*b);
+                        // Insert the result keyed on the smaller of the two
+                        results.insert(
+                            std::make_pair(
+                                std::min(a_raw, b_raw),
+                                std::max(a_raw, b_raw)));
+                    }
+                    // std::cout << "\n -------------------";
+                }
+            }
+
+            // Advance start to after the block
+            start = end;
+        }
+    }
+
+    return results;
+}
+
+Simhash::matches_t Simhash::find_all_keys(
+    std::unordered_set<Simhash::hash_t>& hashes,
+    std::unordered_set<Simhash::hash_t>& keys,
+    size_t number_of_blocks,
+    size_t different_bits)
+{
+    // Copy the values of hashes and keys:
+    std::vector<Simhash::hash_t> copy(hashes.begin(), hashes.end());
+    std::vector<Simhash::hash_t> copy_keys(keys.begin(), keys.end());
+    // Ad-hoc printing:
+    // std::cout << "The hashes are: \n";
+    // print(hashes);
+    // std::cout << "The keys are: \n";
+    // print(keys);
+    // std::cout << "\n -------------------";
+
+    // Create new container:
+    Simhash::matches_t results;
+    auto permutations = Simhash::Permutation::create(number_of_blocks, different_bits);
+    // Iterate over each permutation:
+    for (Simhash::Permutation& permutation : permutations)
+    {
+        // Apply the permutation to the set of hashes and sort
+        auto op = [permutation](Simhash::hash_t h) -> Simhash::hash_t {
+            return permutation.apply(h);
+        };
+        std::transform(hashes.begin(), hashes.end(), copy.begin(), op);
+        std::sort(copy.begin(), copy.end());
+        // Sort keys too:
+        std::transform(keys.begin(), keys.end(), copy_keys.begin(), op);
+        std::sort(copy_keys.begin(), copy_keys.end());
+
 
         // Walk through and find regions that have the same prefix subject to the mask
         Simhash::hash_t mask = permutation.search_mask();
@@ -80,21 +168,25 @@ Simhash::matches_t Simhash::find_all(
             Simhash::hash_t prefix = (*start) & mask;
             std::vector<Simhash::hash_t>::iterator end = start;
             for (; end != copy.end() && (*end & mask) == prefix; ++end) { }
-            
             // For all the hashes that are between start and end, consider them all
             for (auto a = start; a != end; ++a)
             {
-                for (auto b = a + 1; b != end; ++b)
+                for (auto key : copy_keys)
+                // for (auto key = copy_keys.begin(); key != copy_keys.end(); ++key)
                 {
-                    if (Simhash::num_differing_bits(*a, *b) <= different_bits)
+                    // std::cout << "\nComparing a:key \n";
+                    // std::cout << *a;
+                    // std::cout << " : ";
+                    // std::cout << key;
+                    if (Simhash::num_differing_bits(*a, key) <= different_bits)
                     {
                         Simhash::hash_t a_raw = permutation.reverse(*a);
-                        Simhash::hash_t b_raw = permutation.reverse(*b);
+                        Simhash::hash_t key_raw = permutation.reverse(key);
                         // Insert the result keyed on the smaller of the two
                         results.insert(
                             std::make_pair(
-                                std::min(a_raw, b_raw),
-                                std::max(a_raw, b_raw)));
+                                std::min(a_raw, key_raw),
+                                std::max(a_raw, key_raw)));
                     }
                 }
             }
@@ -103,6 +195,7 @@ Simhash::matches_t Simhash::find_all(
             start = end;
         }
     }
+
 
     return results;
 }

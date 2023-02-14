@@ -58,6 +58,7 @@ namespace Simhash {
      * Compute the simhash of a vector of hashes.
      */
     hash_t compute(const std::vector<hash_t>& hashes);
+    hash_t compute(const std::vector<hash_t>& keys);
 
     /**
      * Find the set of all matches within the provided vector of hashes.
@@ -66,6 +67,10 @@ namespace Simhash {
      * restored to their original state.
      */
     matches_t find_all(std::unordered_set<hash_t>& hashes,
+                       size_t number_of_blocks,
+                       size_t different_bits);
+    matches_t find_all_keys(std::unordered_set<hash_t>& hashes,
+                       std::unordered_set<hash_t>& keys,
                        size_t number_of_blocks,
                        size_t different_bits);
 
