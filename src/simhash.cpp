@@ -4,7 +4,6 @@
 #include <algorithm>
 #include <list>
 
-
 size_t Simhash::num_differing_bits(Simhash::hash_t a, Simhash::hash_t b)
 {
     size_t count(0);
@@ -81,7 +80,6 @@ Simhash::matches_t Simhash::find_all(
             Simhash::hash_t prefix = (*start) & mask;
             std::vector<Simhash::hash_t>::iterator end = start;
             for (; end != copy.end() && (*end & mask) == prefix; ++end) { }
-
             // For all the hashes that are between start and end, consider them all
             for (auto a = start; a != end; ++a)
             {
@@ -165,7 +163,6 @@ Simhash::matches_t Simhash::find_all_keys(
             start = end;
         }
     }
-
 
     return results;
 }
